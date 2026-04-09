@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+    <menuitem id="menu_aviation_root"
+              name="Skyledger"
+              sequence="10"/>
+
+    
+    <menuitem id="menu_aviation_operations"
+              name="Operations"
+              parent="menu_aviation_root"
+              sequence="10"/>
+
+    <menuitem id="menu_flight_schedules"
+              name="Flight Schedules"
+              parent="menu_aviation_operations"
+              action="action_flight_schedule_list"
+              sequence="10"/>
+
+    <menuitem id="menu_flight_tickets"
+              name="Tickets"
+              parent="menu_aviation_operations"
+              action="action_flight_ticket_list"
+              sequence="20"/>
+
+    <menuitem id="menu_turnaround_timesheets"
+              name="Turnaround Timesheets"
+              parent="menu_aviation_operations"
+              action="action_flight_turnaround_timesheets"
+              sequence="30"/>
+
+    
+    <menuitem id="menu_aviation_network"
+              name="Network"
+              parent="menu_aviation_root"
+              sequence="20"/>
+
+    <menuitem id="menu_aviation_airports"
+              name="Airports"
+              parent="menu_aviation_network"
+              action="action_aviation_airport"
+              sequence="10"/>
+
+    <menuitem id="menu_flight_routes"
+              name="Flight Routes"
+              parent="menu_aviation_network"
+              action="action_flight_route_list"
+              sequence="20"/>
+
+    <menuitem id="menu_seat_classes"
+              name="Seat Class Pricing"
+              parent="menu_aviation_network"
+              action="action_flight_seat_class"
+              sequence="30"/>
+
+    
+    <menuitem id="menu_aviation_fleet"
+              name="Fleet and MRO"
+              parent="menu_aviation_root"
+              sequence="30"/>
+
+    <menuitem id="menu_aviation_maintenance"
+              name="Maintenance Requests"
+              parent="menu_aviation_fleet"
+              action="action_aviation_maintenance_requests"
+              sequence="10"/>
+
+    <menuitem id="menu_aviation_iot_alerts"
+              name="IoT Alerts"
+              parent="menu_aviation_fleet"
+              action="action_aviation_iot_readings"
+              sequence="20"/>
+
+    <menuitem id="menu_aviation_iot_all"
+              name="All IoT Readings"
+              parent="menu_aviation_fleet"
+              action="action_aviation_iot_all_readings"
+              sequence="30"/>
+
+    
+    <menuitem id="menu_aviation_finance"
+              name="Financials"
+              parent="menu_aviation_root"
+              sequence="40"/>
+
+    <menuitem id="menu_aviation_invoices"
+              name="Aviation Invoices"
+              parent="menu_aviation_finance"
+              action="action_aviation_invoices"
+              sequence="10"/>
+
+    <menuitem id="menu_aviation_loyalty"
+              name="Frequent Flyer Cards"
+              parent="menu_aviation_finance"
+              action="action_aviation_loyalty_cards"
+              sequence="20"/>
+
+    
+    <menuitem id="menu_aviation_analytics"
+              name="Analytics"
+              parent="menu_aviation_root"
+              sequence="50"/>
+
+    <menuitem id="menu_aviation_kpi"
+              name="RASM CASM Dashboard"
+              parent="menu_aviation_analytics"
+              action="action_aviation_dashboard"
+              sequence="10"/>
+
+</odoo>

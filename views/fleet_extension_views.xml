@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_aviation_maintenance_requests" model="ir.actions.act_window">
+        <field name="name">Aircraft Maintenance</field>
+        <field name="res_model">maintenance.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('vehicle_id','!=',False)]</field>
+    </record>
+
+    <record id="action_aviation_iot_readings" model="ir.actions.act_window">
+        <field name="name">IoT Sensor Readings</field>
+        <field name="res_model">aviation.iot.reading</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_alert','=',True)]</field>
+        <field name="context">{'search_default_is_alert': 1}</field>
+    </record>
+
+    <record id="view_fleet_vehicle_aviation_form" model="ir.ui.view">
+        <field name="name">fleet.vehicle.aviation.form.inherit</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+
+            <div name="button_box" position="inside">
+                <button name="action_view_schedules" type="object"
+                        class="oe_stat_button" icon="fa-plane"
+                        invisible="not is_aircraft">
+                    <field name="completed_flights" widget="statinfo" string="Flights Done"/>
+                </button>
+                <button name="action_view_maintenance_requests" type="object"
+                        class="oe_stat_button" icon="fa-wrench"
+                        invisible="not is_aircraft"
+                        context="{'default_vehicle_id': id}">
+                    <field name="open_maintenance_count" widget="statinfo" string="Open MRs"/>
+                </button>
+            </div>
+
+            <sheet position="inside">
+                <div class="alert alert-danger" role="alert"
+                     invisible="not has_emergency_maintenance">
+                    <strong>🚨 Aircraft on Ground (AOG):</strong>
+                    This aircraft has an open Emergency maintenance request.
+                </div>
+            </sheet>
+
+            <notebook position="inside">
+                <page string="✈ Aviation Profile" name="aviation_profile">
+                    <group>
+                        <group string="Classification">
+                            <field name="aviation_type"/>
+                            <field name="manufacturer"/>
+                            <field name="aircraft_model"/>
+                            <field name="year_of_manufacture"/>
+                        </group>
+                        <group string="Performance" invisible="not is_aircraft">
+                            <field name="max_range_nm"/>
+                            <field name="cruise_speed_kts"/>
+                            <field name="max_fuel_capacity_gal"/>
+                        </group>
+                    </group>
+                    <group string="Seat Configuration" invisible="not is_aircraft">
+                        <group>
+                            <field name="seats_first"/>
+                            <field name="seats_business"/>
+                        </group>
+                        <group>
+                            <field name="seats_premium_economy"/>
+                            <field name="seats_economy"/>
+                        </group>
+                        <group>
+                            <field name="total_seats" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Maintenance" invisible="not is_aircraft">
+                        <field name="maintenance_threshold_nm"/>
+                    </group>
+                </page>
+
+                <page string="📡 IoT Sensors" name="iot_sensors"
+                      invisible="not is_aircraft">
+                    <group>
+                        <group string="Linked Devices">
+                            <field name="iot_engine_temp_device_id"/>
+                            <field name="iot_fuel_level_device_id"/>
+                        </group>
+                        <group string="Latest Readings">
+                            <field name="last_engine_temp_c" readonly="1"/>
+                            <field name="last_fuel_level_pct" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="text-center mt-2">
+                        <button name="action_refresh_iot_sensors" type="object"
+                                string="🔄 Refresh Sensor Feed" class="btn-primary"/>
+                    </div>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <record id="view_aviation_iot_reading_list" model="ir.ui.view">
+        <field name="name">aviation.iot.reading.list</field>
+        <field name="model">aviation.iot.reading</field>
+        <field name="arch" type="xml">
+            <list string="IoT Sensor Readings" decoration-danger="is_alert">
+                <field name="timestamp"/>
+                <field name="vehicle_id"/>
+                <field name="sensor_type"/>
+                <field name="value"/>
+                <field name="is_alert" widget="boolean"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_maintenance_request_aviation_form" model="ir.ui.view">
+        <field name="name">maintenance.request.aviation.form.inherit</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="before">
+                <group string="Aviation – Aircraft Link">
+                    <field name="vehicle_id"/>
+                    <field name="aog_reason" invisible="maintenance_type != 'emergency'"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

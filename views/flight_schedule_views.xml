@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_flight_schedule_list" model="ir.ui.view">
+        <field name="name">flight.schedule.list</field>
+        <field name="model">flight.schedule</field>
+        <field name="arch" type="xml">
+            <list string="Flight Schedules"
+                  decoration-danger="state == 'cancelled'"
+                  decoration-success="state == 'completed'"
+                  decoration-info="state == 'airborne'"
+                  decoration-warning="iot_alert">
+                <field name="flight_number"/>
+                <field name="route_id"/>
+                <field name="vehicle_id"/>
+                <field name="departure_datetime"/>
+                <field name="arrival_datetime"/>
+                <field name="block_time_hours" string="Block (hrs)"/>
+                <field name="is_red_eye" widget="boolean_toggle" optional="show"/>
+                <field name="seats_sold"/>
+                <field name="seats_available"/>
+                <field name="occupancy_rate" widget="progressbar" options="{'editable': false}"/>
+                <field name="total_revenue"/>
+                <field name="rasm" optional="hide"/>
+                <field name="casm" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'completed'"
+                       decoration-info="state == 'airborne'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="iot_alert" widget="boolean" optional="hide"/>
+                <field name="weather_alert_active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_flight_schedule_form" model="ir.ui.view">
+        <field name="name">flight.schedule.form</field>
+        <field name="model">flight.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Flight Schedule">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_board" string="Start Boarding" type="object"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_depart" string="Depart" type="object"
+                            invisible="state != 'boarding'"/>
+                    <button name="action_land" string="Land" type="object"
+                            invisible="state != 'airborne'"/>
+                    <button name="action_complete" string="Complete Flight" type="object"
+                            invisible="state != 'landed'" class="btn-primary"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('completed', 'cancelled')"
+                            confirm="Cancel this flight? This cannot be undone."/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,boarding,airborne,landed,completed"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object"
+                                class="oe_stat_button" icon="fa-ticket">
+                            <field name="ticket_count" widget="statinfo" string="Tickets"/>
+                        </button>
+                        
+                        </div>
+
+                    <div class="alert alert-danger" role="alert" invisible="not iot_alert">
+                        <strong>⚠ IoT Alert:</strong>
+                        Engine Temp: <field name="last_engine_temp_c" readonly="1"/>°C |
+                        Fuel Level: <field name="last_fuel_level_pct" readonly="1"/>%
+                    </div>
+
+                    <div class="alert alert-warning" role="alert" invisible="not weather_alert_active">
+                        <strong>🌩 Weather Alert Active:</strong>
+                        Insurance surcharge has been applied to all tickets on this flight.
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="flight_number"/>
+                        <h1><field name="flight_number" readonly="state != 'draft'"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="Route &amp; Aircraft">
+                            <field name="route_id" readonly="state != 'draft'"/>
+                            <field name="vehicle_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                            <field name="aircraft_registration" readonly="1"/>
+                        </group>
+                        <group string="Schedule">
+                            <field name="departure_datetime" readonly="state != 'draft'"/>
+                            <field name="arrival_datetime" readonly="state != 'draft'"/>
+                            <field name="block_time_hours" readonly="1"/>
+                            <field name="is_red_eye" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Capacity &amp; Revenue">
+                            <field name="total_seats" readonly="1"/>
+                            <field name="seats_sold" readonly="1"/>
+                            <field name="seats_available" readonly="1"/>
+                            <field name="occupancy_rate" readonly="1"
+                                   widget="progressbar" options="{'editable': false, 'max_value': 100}"/>
+                            <field name="total_revenue" readonly="1"/>
+                        </group>
+                        <group string="Operations &amp; Cargo">
+                            <field name="weather_alert_active" widget="boolean_toggle"/>
+                            <field name="cargo_weight_kg"/>
+                            <field name="expected_cargo_profit"/>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Tickets" name="tickets">
+                            <field name="ticket_ids" readonly="state in ('completed','cancelled')">
+                                <list>
+                                    <field name="ticket_ref"/>
+                                    <field name="partner_id"/>
+                                    <field name="cabin_class"/>
+                                    <field name="seat_number"/>
+                                    <field name="final_price"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="IoT Sensor Feed" name="iot">
+                            <group>
+                                <group string="Live Sensor Snapshot">
+                                    <field name="last_engine_temp_c" readonly="1"/>
+                                    <field name="last_fuel_level_pct" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Ground Staff Timesheets" name="timesheets">
+                            <field name="timesheet_ids" context="{'default_flight_schedule_id': id}">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="employee_id"/>
+                                    <field name="ground_staff_role"/>
+                                    <field name="unit_amount" string="Hours"/>
+                                    <field name="amount" string="Cost (USD)"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Log" name="log">
+                            <field name="partner_latitude" invisible="1"/>
+                            <field name="partner_longitude" invisible="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    
+
+    <record id="view_flight_schedule_search" model="ir.ui.view">
+        <field name="name">flight.schedule.search</field>
+        <field name="model">flight.schedule</field>
+        <field name="arch" type="xml">
+            <search string="Search Flights">
+                <field name="flight_number"/>
+                <field name="route_id"/>
+                <separator/>
+                <filter name="active_flights" string="Active"
+                        domain="[('state','in',('confirmed','boarding','airborne','landed'))]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_flight_schedule_list" model="ir.actions.act_window">
+        <field name="name">Flight Schedules</field>
+        <field name="res_model">flight.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_flight_schedule_search"/>
+        <field name="context">{'search_default_active_flights': 1}</field>
+    </record>
+
+</odoo>

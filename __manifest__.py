@@ -1,0 +1,153 @@
+                       
+
+{
+
+    'name': 'Skyledger – Aviation ERP',
+
+    'version': '19.0.1.0.0',
+
+    'summary': 'Full-stack Aviation ERP: Routes, Smart Pricing, Fleet IoT, Financials & CRM',
+
+    'description': """
+        Skyledger is a hackathon-grade Aviation ERP built on Odoo 19.
+        Key capabilities:
+        - Route & Schedule Management with Map View
+        - Smart Pricing Engine (Fuel Index, Demand Surge, Competitor Cap, Weather)
+        - Fleet & IoT Integration (Live Sensor Feed, Auto Maintenance Trigger)
+        - Automated Invoicing with G/L mapping, Multi-Currency
+        - Loyalty Programme & Marketing Automation
+        - Executive Dashboard (RASM / CASM KPIs)
+    """,
+
+    'author': 'Skyledger Team',
+
+    'category': 'Industries/Aviation',
+
+    'website': 'https://skyledger.aero',
+
+    'license': 'LGPL-3',
+
+
+
+                                                                                
+
+    'depends': [
+
+        'base',
+
+        'fleet',
+
+        'maintenance',
+
+        'account',
+
+        'stock',
+
+                
+
+        'hr_timesheet',
+
+                                 
+
+        'crm',
+
+        'loyalty',
+
+        'board',
+
+        'mail',
+
+        'web',
+
+    ],
+
+
+
+                                                                               
+
+    'data': [
+
+                                
+
+        'security/aviation_security.xml',
+
+        'security/ir.model.access.csv',
+
+        'data/aviation_data.xml',
+
+        'data/mail_template_data.xml',
+
+
+
+                                                             
+
+        'views/flight_schedule_views.xml', 
+
+        
+
+                                                             
+
+        'views/flight_route_views.xml',    
+
+        
+
+                           
+
+        'views/airport_views.xml',         
+
+        
+
+                                      
+
+        'views/flight_ticket_views.xml',
+
+        'views/pricing_views.xml',
+
+        'views/fleet_extension_views.xml',
+
+        'views/iot_sensor_views.xml',
+
+        'views/timesheet_views.xml',
+
+        'views/invoice_views.xml',
+
+        'views/loyalty_views.xml',
+
+        'views/dashboard_views.xml',
+
+
+
+                           
+
+        'views/menus.xml',
+
+    ],
+
+
+
+    'demo': [],
+
+    'installable': True,
+
+    'application': True,
+
+    'auto_install': False,
+
+
+
+    'assets': {
+
+        'web.assets_backend': [
+
+            'aviation_erp/static/src/js/iot_dashboard.js',
+
+            'aviation_erp/static/src/js/rasm_casm_widget.js',
+
+            'aviation_erp/static/src/css/aviation_erp.css',
+
+        ],
+
+    },
+
+}
+

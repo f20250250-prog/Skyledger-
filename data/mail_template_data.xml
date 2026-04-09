@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    
+    <record id="mail_template_price_drop_alert" model="mail.template">
+        <field name="name">Skyledger – Price Drop Alert</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="subject">✈ Price Drop Alert: {{ object.tracked_route_ids[:1].name if object.tracked_route_ids else 'Your Route' }} — Limited Time Fare!</field>
+        <field name="email_from">{{ (object.company_id.email or user.email) | safe }}</field>
+        <field name="email_to">{{ object.email_from }}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+    <div style="background: #1a1a2e; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <h1 style="color: #00d4ff; margin: 0; font-size: 28px;">✈ Skyledger</h1>
+        <p style="color: #a0a0b0; margin: 4px 0 0;">Price Drop Alert</p>
+    </div>
+    <div style="background: #f9f9f9; padding: 32px; border-radius: 0 0 8px 8px;">
+        <h2 style="color: #1a1a2e;">Good news, {{ object.partner_id.name or object.contact_name or 'Valued Traveller' }}!</h2>
+        <p style="color: #444; font-size: 16px; line-height: 1.6;">
+            A fare you've been tracking has just dropped below your alert threshold.
+        </p>
+        <div style="background: #fff; border: 2px solid #00d4ff; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+            <p style="margin: 0; color: #888; font-size: 14px;">ROUTE</p>
+            <h3 style="color: #1a1a2e; margin: 4px 0; font-size: 22px;">
+                {{ object.tracked_route_ids[:1].origin_airport_id.iata_code if object.tracked_route_ids else '???' }}
+                ✈
+                {{ object.tracked_route_ids[:1].destination_airport_id.iata_code if object.tracked_route_ids else '???' }}
+            </h3>
+            <p style="margin: 0; color: #888; font-size: 14px;">NEW FARE</p>
+            <h2 style="color: #00a651; font-size: 36px; margin: 4px 0;">
+                ${{ '%.2f' % (object.last_alerted_price or 0) }} USD
+            </h2>
+            <p style="color: #888; font-size: 13px;">
+                {{ dict([('economy','Economy'),('premium_economy','Premium Economy'),('business','Business'),('first','First Class')]).get(object.preferred_cabin_class, '') }}
+                Class
+            </p>
+        </div>
+        <p style="color: #666; font-size: 14px;">
+            Fares change frequently. Book soon to lock in this price.
+        </p>
+        <div style="text-align: center; margin-top: 24px;">
+            <a href="https://skyledger.aero/book"
+               style="background: #00d4ff; color: #1a1a2e; padding: 14px 32px;
+                      border-radius: 6px; text-decoration: none; font-weight: bold;
+                      font-size: 16px; display: inline-block;">
+                Book This Fare Now →
+            </a>
+        </div>
+        <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 32px 0;"/>
+        <p style="color: #aaa; font-size: 12px; text-align: center;">
+            You received this because you're tracking this route in Skyledger CRM.<br/>
+            © Skyledger Aviation ERP — Hackathon Demo Build
+        </p>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    
+    <record id="mail_template_ticket_confirmation" model="mail.template">
+        <field name="name">Skyledger – Ticket Confirmation</field>
+        <field name="model_id" ref="aviation_erp.model_flight_ticket"/>
+        <field name="subject">✈ Your Skyledger Ticket {{ object.ticket_ref }} is Confirmed!</field>
+        <field name="email_from">{{ (object.schedule_id.route_id.origin_airport_id.iata_code or 'SKY') | safe }}@skyledger.aero</field>
+        <field name="email_to">{{ object.partner_id.email }}</field>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+    <div style="background: #1a1a2e; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
+        <h1 style="color: #00d4ff; margin: 0;">✈ Skyledger</h1>
+        <p style="color: #a0a0b0; margin: 4px 0 0;">Booking Confirmation</p>
+    </div>
+    <div style="background: #f9f9f9; padding: 32px; border-radius: 0 0 8px 8px;">
+        <h2 style="color: #1a1a2e;">Bon Voyage, {{ object.partner_id.name }}!</h2>
+        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <tr>
+                <td style="padding: 8px; color: #888; font-size: 14px;">Ticket Ref</td>
+                <td style="padding: 8px; font-weight: bold;">{{ object.ticket_ref }}</td>
+            </tr>
+            <tr style="background: #fff;">
+                <td style="padding: 8px; color: #888; font-size: 14px;">Flight</td>
+                <td style="padding: 8px; font-weight: bold;">{{ object.schedule_id.flight_number }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; color: #888; font-size: 14px;">Route</td>
+                <td style="padding: 8px;">
+                    {{ object.schedule_id.route_id.origin_airport_id.iata_code }}
+                    →
+                    {{ object.schedule_id.route_id.destination_airport_id.iata_code }}
+                </td>
+            </tr>
+            <tr style="background: #fff;">
+                <td style="padding: 8px; color: #888; font-size: 14px;">Departure</td>
+                <td style="padding: 8px;">{{ object.schedule_id.departure_datetime }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; color: #888; font-size: 14px;">Class</td>
+                <td style="padding: 8px;">{{ object.cabin_class | title }}</td>
+            </tr>
+            <tr style="background: #fff;">
+                <td style="padding: 8px; color: #888; font-size: 14px;">Seat</td>
+                <td style="padding: 8px;">{{ object.seat_number or 'TBA' }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; color: #888; font-size: 14px;">Total Paid</td>
+                <td style="padding: 8px; color: #00a651; font-weight: bold; font-size: 18px;">
+                    ${{ '%.2f' % object.final_price }} USD
+                </td>
+            </tr>
+            <tr style="background: #fff;" t-if="object.points_earned">
+                <td style="padding: 8px; color: #888; font-size: 14px;">FF Points Earned</td>
+                <td style="padding: 8px; color: #f39c12; font-weight: bold;">
+                    +{{ object.points_earned | int }} points
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

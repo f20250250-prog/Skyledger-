@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+    <record id="view_hr_timesheet_aviation_list" model="ir.ui.view">
+        <field name="name">account.analytic.line.aviation.list.inherit</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="before">
+                <field name="flight_schedule_id" optional="show"/>
+                <field name="ground_staff_role" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    
+    <record id="action_flight_turnaround_timesheets" model="ir.actions.act_window">
+        <field name="name">Turnaround Timesheets</field>
+        <field name="res_model">account.analytic.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('flight_schedule_id', '!=', False)]</field>
+        <field name="context">{'search_default_group_by_schedule': 1}</field>
+    </record>
+
+</odoo>

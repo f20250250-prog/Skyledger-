@@ -1,0 +1,56 @@
+
+
+
+
+:root {
+    --sky-navy:     #1a1a2e;
+    --sky-blue:     #00d4ff;
+    --sky-green:    #00a651;
+    --sky-amber:    #f39c12;
+    --sky-red:      #e74c3c;
+}
+
+
+.o_stat_button .o_stat_text.text-danger {
+    animation: sky-pulse 1.5s infinite;
+}
+
+@keyframes sky-pulse {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+
+.o_form_view .o_group[name="pricing"] {
+    border-left: 4px solid var(--sky-blue);
+    padding-left: 12px;
+    background: rgba(0, 212, 255, 0.04);
+    border-radius: 0 6px 6px 0;
+}
+
+
+.o_list_view .o_data_row.o_data_row_selected.text-danger td {
+    background-color: rgba(231, 76, 60, 0.08);
+}
+
+
+.o_dashboard .o_control_panel .o_cp_title {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+
+.o_kanban_view .o_kanban_record .badge.bg-danger {
+    background-color: var(--sky-red) !important;
+}
+.o_kanban_view .o_kanban_record .badge.bg-warning {
+    background-color: var(--sky-amber) !important;
+    color: #fff !important;
+}
+
+
+.o_map_marker_popup .o_map_popup_name {
+    font-weight: bold;
+    color: var(--sky-navy);
+}

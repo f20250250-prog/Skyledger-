@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    
+    <record id="seq_flight_ticket" model="ir.sequence">
+        <field name="name">Flight Ticket Reference</field>
+        <field name="code">flight.ticket</field>
+        <field name="prefix">TKT/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_flight_schedule" model="ir.sequence">
+        <field name="name">Flight Schedule Number</field>
+        <field name="code">flight.schedule</field>
+        <field name="prefix">SKY</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="airport_los" model="aviation.airport">
+        <field name="iata_code">LOS</field>
+        <field name="name">Murtala Muhammed International Airport</field>
+        <field name="city">Lagos</field>
+        <field name="country_id" ref="base.ng"/>
+        <field name="partner_latitude">6.5774</field>
+        <field name="partner_longitude">3.3212</field>
+        <field name="elevation_ft">135</field>
+        <field name="terminal_count">2</field>
+    </record>
+
+    <record id="airport_dxb" model="aviation.airport">
+        <field name="iata_code">DXB</field>
+        <field name="name">Dubai International Airport</field>
+        <field name="city">Dubai</field>
+        <field name="country_id" ref="base.ae"/>
+        <field name="partner_latitude">25.2532</field>
+        <field name="partner_longitude">55.3657</field>
+        <field name="elevation_ft">62</field>
+        <field name="terminal_count">3</field>
+    </record>
+
+    <record id="airport_lhr" model="aviation.airport">
+        <field name="iata_code">LHR</field>
+        <field name="name">London Heathrow Airport</field>
+        <field name="city">London</field>
+        <field name="country_id" ref="base.uk"/>
+        <field name="partner_latitude">51.4775</field>
+        <field name="partner_longitude">-0.4614</field>
+        <field name="elevation_ft">83</field>
+        <field name="terminal_count">5</field>
+    </record>
+
+    <record id="airport_jfk" model="aviation.airport">
+        <field name="iata_code">JFK</field>
+        <field name="name">John F. Kennedy International Airport</field>
+        <field name="city">New York</field>
+        <field name="country_id" ref="base.us"/>
+        <field name="partner_latitude">40.6413</field>
+        <field name="partner_longitude">-73.7781</field>
+        <field name="elevation_ft">13</field>
+        <field name="terminal_count">6</field>
+    </record>
+
+    <record id="route_los_dxb" model="flight.route">
+        <field name="name">LOS-DXB</field>
+        <field name="origin_airport_id" ref="airport_los"/>
+        <field name="destination_airport_id" ref="airport_dxb"/>
+        <field name="distance_nm">3094</field>
+        <field name="fuel_burn_gallons">28500</field>
+        <field name="base_operational_cost">42000</field>
+        <field name="currency_id" search="[('name', '=', 'USD')]" model="res.currency"/>
+    </record>
+
+    <record id="route_dxb_lhr" model="flight.route">
+        <field name="name">DXB-LHR</field>
+        <field name="origin_airport_id" ref="airport_dxb"/>
+        <field name="destination_airport_id" ref="airport_lhr"/>
+        <field name="distance_nm">3405</field>
+        <field name="fuel_burn_gallons">31200</field>
+        <field name="base_operational_cost">48000</field>
+        <field name="currency_id" search="[('name', '=', 'USD')]" model="res.currency"/>
+    </record>
+
+    <record id="loyalty_program_ff" model="loyalty.program">
+        <field name="name">Skyledger Frequent Flyer</field>
+        <field name="program_type">loyalty</field>
+        <field name="trigger">auto</field>
+        <field name="applies_on">current</field>
+        <field name="currency_id" search="[('name', '=', 'USD')]" model="res.currency"/>
+    </record>
+
+</odoo>

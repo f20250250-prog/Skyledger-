@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+
+    
+    <record id="view_crm_lead_aviation_form" model="ir.ui.view">
+        <field name="name">crm.lead.aviation.form.inherit</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="✈ Flight Tracking" name="flight_tracking">
+                    <group>
+                        <group string="Price Alert Settings">
+                            <field name="preferred_cabin_class"/>
+                            <field name="price_alert_threshold"/>
+                            <field name="last_alerted_price" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Tracked Routes"/>
+                    <field name="tracked_route_ids" widget="many2many_tags"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    
+    <record id="action_aviation_loyalty_cards" model="ir.actions.act_window">
+        <field name="name">Frequent Flyer Cards</field>
+        <field name="res_model">loyalty.card</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('program_id.name','ilike','Frequent Flyer')]</field>
+    </record>
+
+</odoo>

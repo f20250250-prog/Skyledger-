@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+    <record id="view_fuel_index_form" model="ir.ui.view">
+        <field name="name">aviation.fuel.index.form</field>
+        <field name="model">aviation.fuel.index</field>
+        <field name="arch" type="xml">
+            <form string="Fuel Index Service">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Jet A-1 Price Feed</strong><br/>
+                        The pricing engine fetches the current Jet A-1 spot price
+                        automatically (30-minute cache). Use the button below to
+                        force a refresh (simulated in demo mode).
+                    </div>
+                    <group>
+                        <field name="id" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Refresh Fuel Price Now" type="object"
+                                name="get_current_jet_a1_price" class="btn-primary"/>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    
+    <record id="action_fuel_index_diagnostic" model="ir.actions.act_window">
+        <field name="name">Fuel Index – Live Price</field>
+        <field name="res_model">aviation.fuel.index</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    
+    <record id="view_flight_seat_class_list" model="ir.ui.view">
+        <field name="name">flight.seat.class.list</field>
+        <field name="model">flight.seat.class</field>
+        <field name="arch" type="xml">
+            <list string="Seat Classes">
+                <field name="route_id"/>
+                <field name="cabin_class"/>
+                <field name="seat_count"/>
+                <field name="base_price"/>
+                <field name="max_fuel_surcharge_pct"/>
+                <field name="max_demand_surge_pct"/>
+                <field name="product_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_flight_seat_class" model="ir.actions.act_window">
+        <field name="name">Seat Class Pricing</field>
+        <field name="res_model">flight.seat.class</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

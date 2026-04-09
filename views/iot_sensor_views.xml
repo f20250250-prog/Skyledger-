@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+    <record id="view_aviation_iot_reading_search" model="ir.ui.view">
+        <field name="name">aviation.iot.reading.search</field>
+        <field name="model">aviation.iot.reading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="vehicle_id"/>
+                <field name="schedule_id"/>
+                <field name="sensor_type"/>
+
+                <filter name="alerts_only" string="Alerts Only" domain="[('is_alert','=',True)]"/>
+                <separator/>
+                <filter name="engine_temp" string="Engine Temp" domain="[('sensor_type','=','engine_temp')]"/>
+                <filter name="fuel_level" string="Fuel Level" domain="[('sensor_type','=','fuel_level')]"/>
+
+                <group>
+                    <filter name="group_aircraft" string="Aircraft" context="{'group_by': 'vehicle_id'}"/>
+                    <filter name="group_sensor" string="Sensor Type" context="{'group_by': 'sensor_type'}"/>
+                    <filter name="group_flight" string="Flight" context="{'group_by': 'schedule_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    
+    <record id="action_aviation_iot_all_readings" model="ir.actions.act_window">
+        <field name="name">All IoT Readings</field>
+        <field name="res_model">aviation.iot.reading</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_aviation_iot_reading_search"/>
+    </record>
+
+    
+    <record id="ir_cron_simulate_iot_feed" model="ir.cron">
+        <field name="name">Skyledger: Simulate IoT Sensor Feed</field>
+        <field name="model_id" ref="aviation_erp.model_aviation_iot_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+airborne = env['flight.schedule'].search([('state', '=', 'airborne')])
+for sched in airborne:
+    env['aviation.iot.reading'].simulate_live_feed(sched.vehicle_id.id, sched.id)
+        </field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>

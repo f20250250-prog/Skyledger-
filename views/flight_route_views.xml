@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+    <record id="view_flight_route_form" model="ir.ui.view">
+        <field name="name">flight.route.form</field>
+        <field name="model">flight.route</field>
+        <field name="arch" type="xml">
+            <form string="Flight Route">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_flight_schedule_list)d" type="action"
+                                class="oe_stat_button" icon="fa-calendar"
+                                context="{'default_route_id': id}">
+                            <field name="schedule_count" widget="statinfo" string="Schedules"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Route Code (auto-generated)"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Route Definition">
+                            <field name="origin_airport_id"/>
+                            <field name="destination_airport_id"/>
+                            <field name="distance_nm"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Cost &amp; Fuel">
+                            <field name="base_operational_cost"/>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                            <field name="fuel_burn_gallons"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Seat Classes" name="seat_classes">
+                            <field name="seat_class_ids">
+                                <list editable="bottom">
+                                    <field name="cabin_class"/>
+                                    <field name="seat_count"/>
+                                    <field name="base_price"/>
+                                    <field name="currency_id" optional="hide"/>
+                                    <field name="max_fuel_surcharge_pct"/>
+                                    <field name="max_demand_surge_pct"/>
+                                    <field name="checked_bags"/>
+                                    <field name="product_id"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Waypoints / Flight Path" name="waypoints">
+                            <field name="waypoint_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="waypoint_name"/>
+                                    <field name="latitude"/>
+                                    <field name="longitude"/>
+                                    <field name="altitude_ft"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Tracked Opportunities" name="crm">
+                            <field name="lead_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="stage_id"/>
+                                    <field name="expected_revenue"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    
+    <record id="view_flight_route_search" model="ir.ui.view">
+        <field name="name">flight.route.search</field>
+        <field name="model">flight.route</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="origin_airport_id"/>
+                <field name="destination_airport_id"/>
+                <filter name="active" string="Active" domain="[('active','=',True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_flight_route_list" model="ir.ui.view">
+        <field name="name">flight.route.list</field>
+        <field name="model">flight.route</field>
+        <field name="arch" type="xml">
+            <list string="Flight Routes">
+                <field name="name"/>
+                <field name="origin_airport_id"/>
+                <field name="destination_airport_id"/>
+                <field name="distance_nm"/>
+                <field name="fuel_burn_gallons"/>
+                <field name="base_operational_cost"/>
+                <field name="schedule_count"/>
+            </list>
+        </field>
+    </record>
+
+    
+    <record id="action_flight_route_list" model="ir.actions.act_window">
+        <field name="name">Flight Routes</field>
+        <field name="res_model">flight.route</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_flight_route_search"/>
+    </record>
+
+</odoo>

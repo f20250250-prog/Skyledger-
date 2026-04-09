@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_flight_ticket_list" model="ir.ui.view">
+        <field name="name">flight.ticket.list</field>
+        <field name="model">flight.ticket</field>
+        <field name="arch" type="xml">
+            <list string="Flight Tickets"
+                  decoration-danger="competitor_alert"
+                  decoration-muted="state == 'cancelled'">
+                <field name="ticket_ref"/>
+                <field name="partner_id"/>
+                <field name="schedule_id"/>
+                <field name="route_id" optional="hide"/>
+                <field name="cabin_class"/>
+                <field name="seat_number" optional="hide"/>
+                <field name="base_fare"/>
+                <field name="fuel_surcharge"/>
+                <field name="demand_surge_pct" optional="show" string="Surge %"/>
+                <field name="final_price"/>
+                <field name="final_price_quoted" optional="hide"/>
+                <field name="quote_currency_id" optional="hide"/>
+                <field name="competitor_alert" widget="boolean" optional="show"/>
+                <field name="loyalty_tier" optional="show"/>
+                <field name="points_earned" optional="show"/>
+                <field name="invoice_state" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'invoiced'"
+                       decoration-warning="state == 'confirmed'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_flight_ticket_form" model="ir.ui.view">
+        <field name="name">flight.ticket.form</field>
+        <field name="model">flight.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Flight Ticket">
+                <header>
+                    <button name="action_confirm" string="Confirm &amp; Invoice"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"
+                            confirm="Confirm this ticket and generate an invoice?"/>
+                    <button name="action_view_invoice" string="View Invoice"
+                            type="object" invisible="not invoice_id"/>
+                    <button name="action_cancel" string="Cancel"
+                            type="object"
+                            invisible="state in ('invoiced','cancelled')"
+                            confirm="Cancel this ticket?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,invoiced"/>
+                </header>
+
+                <sheet>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not competitor_alert">
+                        <strong>📊 Competitor Alert:</strong>
+                        Our price is more than 15% above the market average.
+                        Price has been auto-capped at 115% of market average.
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="ticket_ref"/>
+                        <h1><field name="ticket_ref" readonly="1"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="Passenger">
+                            <field name="partner_id" readonly="state != 'draft'"/>
+                            <field name="passport_number"/>
+                            <field name="loyalty_card_id" readonly="1"/>
+                            <field name="loyalty_tier" readonly="1" widget="badge"
+                                   decoration-success="loyalty_tier == 'platinum'"
+                                   decoration-warning="loyalty_tier == 'gold'"
+                                   decoration-info="loyalty_tier == 'silver'"/>
+                        </group>
+                        <group string="Flight Assignment">
+                            <field name="schedule_id" readonly="state != 'draft'"/>
+                            <field name="route_id" readonly="1"/>
+                            <field name="cabin_class" readonly="state != 'draft'"/>
+                            <field name="seat_number"/>
+                        </group>
+                    </group>
+
+                    <group string="🧠 Smart Pricing Engine Breakdown" name="pricing">
+                        <group string="Revenue Components">
+                            <field name="base_fare" readonly="1"/>
+                            <field name="fuel_surcharge" readonly="1"/>
+                            <field name="jet_a1_price_snapshot" readonly="1"
+                                   string="Jet A-1 Snapshot ($/gal)"/>
+                            <field name="demand_surge_amount" readonly="1"/>
+                            <field name="demand_surge_pct" readonly="1" string="Demand Surge (%)"/>
+                            <field name="weather_surcharge_amount" readonly="1"/>
+                        </group>
+                        <group string="Discounts &amp; Adjustments">
+                            <field name="red_eye_discount_amount" readonly="1"/>
+                            <field name="red_eye_discount_pct" readonly="1" string="Red-Eye Disc. (%)"/>
+                            <field name="cargo_subsidy_amount" readonly="1"/>
+                            <field name="loyalty_discount_amount" readonly="1"/>
+                            <field name="loyalty_discount_pct" readonly="1" string="Loyalty Disc. (%)"/>
+                            <field name="points_earned" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Competitor Benchmarking">
+                        <group>
+                            <field name="market_average_price"/>
+                            <field name="competitor_alert" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="subtotal_usd" readonly="1" string="Subtotal (pre-cap, USD)"/>
+                        </group>
+                    </group>
+
+                    <group string="Final Price">
+                        <group>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                            <field name="final_price" readonly="1" class="o_field_highlight fw-bold"/>
+                        </group>
+                        <group string="AED Quotation (Multi-Currency)">
+                            <field name="quote_currency_id" options="{'no_create': True}"/>
+                            <field name="final_price_quoted" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Invoice" invisible="not invoice_id">
+                        <field name="invoice_id" readonly="1"/>
+                        <field name="invoice_state" readonly="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_flight_ticket_search" model="ir.ui.view">
+        <field name="name">flight.ticket.search</field>
+        <field name="model">flight.ticket</field>
+        <field name="arch" type="xml">
+            <search string="Search Tickets">
+                <field name="ticket_ref"/>
+                <field name="partner_id"/>
+                <field name="schedule_id"/>
+                <field name="route_id"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state','=','confirmed')]"/>
+                <filter name="invoiced" string="Invoiced" domain="[('state','=','invoiced')]"/>
+                <filter name="competitor_alert" string="Competitor Alert" domain="[('competitor_alert','=',True)]"/>
+                <separator/>
+                <filter name="business_class" string="Business" domain="[('cabin_class','in',('business','first'))]"/>
+                
+                <separator/>
+                <filter name="group_flight" string="Flight" context="{'group_by': 'schedule_id'}"/>
+                <filter name="group_cabin" string="Cabin Class" context="{'group_by': 'cabin_class'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_loyalty" string="Loyalty Tier" context="{'group_by': 'loyalty_tier'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_flight_ticket_list" model="ir.actions.act_window">
+        <field name="name">Tickets</field>
+        <field name="res_model">flight.ticket</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_flight_ticket_search"/>
+    </record>
+
+</odoo>

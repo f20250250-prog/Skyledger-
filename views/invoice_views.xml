@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_aviation_invoice_search" model="ir.ui.view">
+        <field name="name">account.move.aviation.search.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[1]" position="after">
+                <filter name="aviation_invoices" string="✈ Skyledger Tickets"
+                        domain="[('narration', 'ilike', 'Skyledger ticket')]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_aviation_invoices" model="ir.actions.act_window">
+        <field name="name">Aviation Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('move_type','=','out_invoice'),('narration','ilike','Skyledger ticket')]</field>
+        <field name="context">{'default_move_type': 'out_invoice'}</field>
+    </record>
+
+    <record id="ir_cron_price_drop_alerts" model="ir.cron">
+        <field name="name">Skyledger: Price Drop Alert Check</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_price_drop_alerts()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>
