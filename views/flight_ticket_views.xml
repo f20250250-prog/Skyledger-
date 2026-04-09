@@ -55,7 +55,7 @@
                 <sheet>
                     <div class="alert alert-warning" role="alert"
                          invisible="not competitor_alert">
-                        <strong>📊 Competitor Alert:</strong>
+                        <strong> Competitor Alert:</strong>
                         Our price is more than 15% above the market average.
                         Price has been auto-capped at 115% of market average.
                     </div>
@@ -83,7 +83,7 @@
                         </group>
                     </group>
 
-                    <group string="🧠 Smart Pricing Engine Breakdown" name="pricing">
+                    <group string="Smart Pricing Engine Breakdown" name="pricing">
                         <group string="Revenue Components">
                             <field name="base_fare" readonly="1"/>
                             <field name="fuel_surcharge" readonly="1"/>

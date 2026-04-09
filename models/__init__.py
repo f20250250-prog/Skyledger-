@@ -1,42 +1,13 @@
-                       
-
-                                
-
 from . import airport
-
 from . import flight_route
-
 from . import flight_schedule
-
 from . import flight_seat_class
-
-
-
-                                 
-
 from . import flight_ticket
-
 from . import fuel_index_service
-
-
-
-                                    
-
 from . import fleet_extension
-
 from . import iot_sensor
-
 from . import flight_timesheet
-
-
-
-                                        
-
 from . import flight_invoice
-
 from . import loyalty_extension
-
 from . import crm_extension
-
 from . import aviation_dashboard
-
