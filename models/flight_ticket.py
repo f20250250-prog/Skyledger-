@@ -159,7 +159,7 @@ class FlightTicket(models.Model):
     def _compute_loyalty_tier(self):
         for rec in self:
             partner = rec.partner_id
-            loyalty_card = self.env['loyalty.card'].search([
+            loyalty_card = self.env['loyalty.card'].sudo().search([
                 ('partner_id', '=', partner.id),
                 ('program_id.name', 'ilike', 'Frequent Flyer'),
             ], limit=1, order='points desc')
@@ -294,7 +294,7 @@ class FlightTicket(models.Model):
         for rec in self:
             if rec.schedule_id.seats_available <= 0:
                 raise UserError(_('No seats available on flight %s.', rec.schedule_id.flight_number))
-            rec.state = 'confirmed'
+            rec.write({'state': 'confirmed'})
             rec.message_post(body=_('Ticket confirmed at $%.2f.', rec.final_price))
         self._create_invoice()
 
@@ -350,14 +350,23 @@ class FlightTicket(models.Model):
                     'quantity': 1,
                     'price_unit': -rec.loyalty_discount_amount,
                 }))
-            move = AccountMove.create({
+            journal = self.env['account.journal'].sudo().search([
+                ('type', '=', 'sale'),
+                ('company_id', '=', self.env.company.id),
+            ], limit=1)
+            if not journal:
+                raise UserError(_('No Sales journal found. Go to Accounting → Configuration → Journals and create one with type "Sales".'))
+
+            move = AccountMove.sudo().create({
                 'move_type': 'out_invoice',
+                'journal_id': journal.id,
                 'partner_id': rec.partner_id.id,
                 'currency_id': rec.currency_id.id,
                 'invoice_line_ids': invoice_lines,
-                'narration': _('Skyledger ticket %s | Flight %s | %s → %s', rec.ticket_ref, rec.schedule_id.flight_number, rec.schedule_id.route_id.origin_airport_id.iata_code, rec.schedule_id.route_id.destination_airport_id.iata_code),
+                'narration': ...
             })
             rec.write({'invoice_id': move.id, 'state': 'invoiced'})
+            rec.schedule_id._recompute_revenue()
             rec.message_post(body=_('Invoice %s generated.', move.name), subtype_xmlid='mail.mt_note')
 
     def action_view_invoice(self):

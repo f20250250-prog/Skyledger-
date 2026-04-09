@@ -137,3 +137,11 @@ class FleetVehicleAviationExtension(models.Model):
             'domain': [('vehicle_id', '=', self.id)],
             'context': {'default_vehicle_id': self.id},
         }
+
+    def _recompute_revenue(self):
+        for sched in self:
+            invoiced_tickets = self.env['flight.ticket'].search([
+                ('schedule_id', '=', sched.id),
+                ('state', 'in', ['confirmed', 'invoiced']),
+            ])
+            sched.total_revenue = sum(invoiced_tickets.mapped('final_price'))

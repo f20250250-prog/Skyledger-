@@ -83,10 +83,8 @@ class FlightSchedule(models.Model):
     ticket_count = fields.Integer(
         string='Tickets', compute='_compute_ticket_count', store=True
     )
-    total_revenue = fields.Monetary(
-        string='Total Revenue', compute='_compute_total_revenue',
-        currency_field='currency_id', store=True
-    )
+    total_revenue = fields.Float(string='Total Revenue (USD)', default=0.0)
+    
     currency_id = fields.Many2one(
         'res.currency', default=lambda self: self.env.ref('base.USD')
     )

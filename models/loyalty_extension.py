@@ -22,7 +22,7 @@ class FlightTicketLoyaltyMixin(models.Model):
     @api.depends('partner_id')
     def _compute_loyalty_card(self):
         for rec in self:
-            card = self.env['loyalty.card'].search([
+            card = self.env['loyalty.card'].sudo().search([
                 ('partner_id', '=', rec.partner_id.id),
                 ('program_id.name', 'ilike', 'Frequent Flyer'),
             ], limit=1, order='points desc')
@@ -31,13 +31,13 @@ class FlightTicketLoyaltyMixin(models.Model):
     def _award_loyalty_points(self):
         for rec in self:
             if not rec.loyalty_card_id:
-                ff_program = self.env['loyalty.program'].search([
+                ff_program = self.env['loyalty.program'].sudo().search([
                     ('name', 'ilike', 'Frequent Flyer')
                 ], limit=1)
                 if not ff_program:
                     _logger.info('Skyledger: No Frequent Flyer program found, skipping points.')
                     continue
-                card = self.env['loyalty.card'].create({
+                card = self.env['loyalty.card'].sudo().create({
                     'program_id': ff_program.id,
                     'partner_id': rec.partner_id.id,
                     'points': 0,
